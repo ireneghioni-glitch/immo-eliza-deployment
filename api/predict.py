@@ -30,6 +30,7 @@ from utils.validation import calculate_metrics
 # --- Constants ---------------------------------------------------------------------------------------
 
 DEFAULT_MODEL_NAME = "xgboost_model.joblib"
+WINNING_MODEL = "xgboost"
 
 
 # --- Functions ---------------------------------------------------------------------------------------
@@ -95,8 +96,6 @@ def predict_price(new_data, model, ohe, ordinal, scaler, bins_density, global_me
 
 if __name__ == "__main__":
 
-    WINNING_MODEL = "xgboost"
-
     dummy_data = {
         'living_area_m2': 120,
         'property_type': "apartment",
@@ -112,8 +111,8 @@ if __name__ == "__main__":
         'building_year': 2015,
         'state_of_the_building': "Normal",
         'kitchen_equipped': "Fully equipped",
-        'region': "Brussels Capital Region",
-        'province': "Brussels",
+        'region': "Brussels",
+        'province': "Brussels Capital Region",
         'floor_number': 8
     }
 
