@@ -8,6 +8,7 @@ app.py
 # import libraries
 import joblib
 import os
+from pathlib import Path
 
 from typing import Literal, Union
 from fastapi import FastAPI, HTTPException
@@ -15,6 +16,10 @@ from pydantic import BaseModel
 
 # from predict.py
 from predict import load_model, predict_price, WINNING_MODEL
+
+
+# dynamic localization of current file directory (api/) 
+BASE_DIR = Path(__file__).resolve().parent
 
 
 
@@ -29,13 +34,14 @@ app = FastAPI()
 print("🔄 Loading model and transformers in memory...")
 
 MODEL = load_model(model_type=WINNING_MODEL)
-OHE = joblib.load("ohe.joblib")
-ORDINAL = joblib.load("ordinal.joblib")
-SCALER = joblib.load("scaler.joblib")
-BINS_DENSITY = joblib.load("bins_density.joblib")
-GLOBAL_MEDIANS = joblib.load("global_medians.joblib")
-DENSITY_MAPPING = joblib.load("density_mapping.joblib")
-GEO_MAPPING = joblib.load("geo_mapping.joblib")
+
+OHE = joblib.load(BASE_DIR / "ohe.joblib")
+ORDINAL = joblib.load(BASE_DIR / "ordinal.joblib")
+SCALER = joblib.load(BASE_DIR / "scaler.joblib")
+BINS_DENSITY = joblib.load(BASE_DIR / "bins_density.joblib")
+GLOBAL_MEDIANS = joblib.load(BASE_DIR / "global_medians.joblib")
+DENSITY_MAPPING = joblib.load(BASE_DIR / "density_mapping.joblib")
+GEO_MAPPING = joblib.load(BASE_DIR / "geo_mapping.joblib")
 
 
 print("✅ All artifacts are now ready in RAM.")
