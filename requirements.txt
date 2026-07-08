@@ -1,7 +1,5 @@
-Package         Version
---------------- -----------
-fastapi         0.85.0
-uvicorn         0.18.3
-pandas          3.0.3
-scikit-learn    1.9.0
-joblib          1.5.3
+fastapi==0.85.0
+uvicorn==0.18.3
+pandas==3.0.3
+scikit-learn==1.9.0
+joblib==1.5.3
