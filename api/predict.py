@@ -14,8 +14,8 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from utils.split_data import split_data
-from utils.preprocessing import (
+from .utils.split_data import split_data
+from .utils.preprocessing import (
     allign_data, 
     drop_useless_columns, 
     add_new_features, 
@@ -24,7 +24,7 @@ from utils.preprocessing import (
     standardize_data, 
     are_there_strings
 )
-from utils.validation import calculate_metrics
+from .utils.validation import calculate_metrics
 
 
 # --- Constants ---------------------------------------------------------------------------------------
