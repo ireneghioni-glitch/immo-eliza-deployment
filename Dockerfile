@@ -8,7 +8,7 @@ RUN mkdir /app
 WORKDIR /app
 
 # copy all files in current directory in /app
-COPY . /app
+COPY requirements.txt /app/
 
 # update pip
 RUN pip install --upgrade pip
@@ -16,6 +16,9 @@ RUN pip install --upgrade pip
 # install dependencies from "requirements.txt"
 RUN pip install -r requirements.txt
 
+# copy ALL the root content inside the /app directory in the container
+COPY . /app
+
 # Run the app
 # Set host to 0.0.0.0 to make it run on the container's network
-CMD uvicorn api.app:app --host 0.0.0.0 --port $PORT
+CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
