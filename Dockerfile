@@ -1,5 +1,5 @@
 # python 3.10 officila docker image
-FROM python:3.10
+FROM python:3.11-slim
 
 # create folder app at root of image
 RUN mkdir /app
