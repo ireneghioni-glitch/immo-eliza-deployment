@@ -7,6 +7,7 @@ app.py
 
 # import libraries
 import joblib
+import os
 
 from typing import Literal, Union
 from fastapi import FastAPI, HTTPException
@@ -16,7 +17,10 @@ from pydantic import BaseModel
 from predict import load_model, predict_price, WINNING_MODEL
 
 
+
+PORT = os.environ.get("PORT", 8000)
 app = FastAPI() 
+
 
 
 # LOADING ARTIFACTS
@@ -37,14 +41,15 @@ GEO_MAPPING = joblib.load("geo_mapping.joblib")
 print("✅ All artifacts are now ready in RAM.")
 
 
+
 # PYDANTIC SCHEMA
 # ===============
 
 # entrance schema
-class PropertyData(BaseModel): # PropertyPrice
-    living_area_m2: float # living_area_m2 (float)
+class PropertyData(BaseModel):
+    living_area_m2: float
     property_type: Union[Literal["House", "Apartment"], None] = None
-    bedrooms: int # bedrooms (int)
+    bedrooms: int
     postal_code: str
     epc_score: Literal['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++']
     total_area_m2: Union[int, None] = None
@@ -59,7 +64,7 @@ class PropertyData(BaseModel): # PropertyPrice
     region: Union[Literal['Wallonia', 'Flanders', 'Brussels'], None] = None
     province: Union[Literal['Namur', 'Antwerp', 'Hainaut', 'Limburg', 'Brussels Capital Region', 'Walloon Brabant', 'East Flanders', 'Luxembourg', 'West Flanders', 'Liège', 'Flemish Brabant'], None] = None
     floor_number: Union[int, None] = None
-    bathrooms: Union[int, None] = None # postal_code (str)
+    bathrooms: Union[int, None] = None
     
 
     
