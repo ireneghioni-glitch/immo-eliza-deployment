@@ -9,6 +9,7 @@ predict.py - MODEL PREDICTIVE MODULE
 
 import os
 import joblib
+from pathlib import Path
 
 # Data manipulation & visualization
 import numpy as np
@@ -27,6 +28,9 @@ from .utils.preprocessing import (
 from .utils.validation import calculate_metrics
 
 
+BASE_DIR = Path(__file__).resolve().parent
+
+
 # --- Constants ---------------------------------------------------------------------------------------
 
 DEFAULT_MODEL_NAME = "xgboost_model.joblib"
@@ -37,7 +41,7 @@ WINNING_MODEL = "xgboost"
 
 def load_model(model_type="xgboost"):
     model_file_name = f"{model_type}_model.joblib"
-    model_path = os.path.join(model_file_name)
+    model_path = BASE_DIR / model_file_name
 
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"❌ Model not found in {model_path}.")
