@@ -15,7 +15,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 # from predict.py
-from predict import load_model, predict_price, WINNING_MODEL
+from .predict import load_model, predict_price, WINNING_MODEL
 
 
 # dynamic localization of current file directory (api/) 
