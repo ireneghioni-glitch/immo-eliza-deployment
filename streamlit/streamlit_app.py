@@ -1,0 +1,209 @@
+import streamlit as st
+import pandas as pd
+import requests
+
+
+# --- Constants and datasets loading ------------------------------------------
+
+MAP = "streamlit/map_for_inv_app.csv"
+PROV_STATS = "streamlit/province_stats_for_inv_app.csv"
+
+df_stats = pd.read_csv(PROV_STATS)
+df_map = pd.read_csv(MAP)
+
+# --- Initial configuration ---
+st.set_page_config(page_title="immoEliza Properties Predictive Tool", layout="wide")
+
+# --- sidebar configuration ---
+# st.sidebar.imag("immoeliza_logo")
+st.sidebar.title("🏠 ImmoEliza Hub")
+st.sidebar.markdown("---")
+
+# type of user choice
+user = st.sidebar.radio(
+    label="Select relatively to the objective of the analysis:",
+    options=["Buyer", "Investor"]
+)
+
+st.sidebar.markdown("---")
+
+# --- loading data ---
+@st.cache_data
+def load_data_for_investor():
+    df = pd.read_csv("province_stats_for_inv_app.csv")
+    return df
+
+df_full = load_data_for_investor()
+
+# --- BUYER INTERFACE ---
+def render_buyer_interface():
+    st.header("Verify Market Value of a Property")
+    st.subheader("Insert details about the property you are considering to buy")
+    # organization of inputs in 2 columns
+    col1, col2 = st.columns(2)
+
+    # property characteristics
+    with col1:
+        property_type = st.radio("Kind of property", ["House", "Apartment"])
+        if property_type == "Apartment":
+            floor_number = st.number_input("Property Floor", "Insert the floor number", min_value=0, max_value=50)
+            floor_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
+        living_area_m2 = st.number_input("Habitable floor area", min_value=1)
+        bedrooms = st.slider("Number of bedrooms", min_value=1, max_value=10, value=1)
+        bathrooms = st.slider("Number of bathrooms", min_value=1, max_value=5, value=1)
+        has_terrace = st.checkbox("Has terrace")
+        if has_terrace:
+            terrace_area_mq = st.number_input("Terrace area", min_value=1)
+        has_garden = st.checkbox("Has garden")
+        if has_garden:
+            garden_area_mq = st.number_input("Garden area", min_value=1)
+        epc_score = st.selectbox("Select the EPC score", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
+        state_of_the_building = st.selectbox("Select the state of the property", ['New', 'under construction', 'Fully renovated', 'Normal', 'To renovate', 'To restore', 'To demolish'])
+        year_of_construction = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
+        facades = st.slider("Number of facades", min_value=1, max_value=4)
+        kitchen_equipped = st.selectbox("Select level of kitchen equippment", ['Not equipped', 'Partially equipped', 'Fully equipped', 'Super equipped'])
+        furnished = st.checkbox(f"{property_type} is furnished")
+
+    with col2:
+        region = st.selectbox("Select the region", ["Wallonia", "Flanders", "Brussels Capital Region"])
+        province = st.selectbox("Select the province", ["Namur", "Antwerp", "Hainaut", "Limburg", "Brussels", "Walloon Brabant", "East Flanders", "Luxembourg", "West Flanders", "Liège", "Flemish Brabant"])
+        postal_code = st.text_input("Post Code", "Insert a valid postal code")
+    
+
+    st.markdown("---")
+
+    # Button
+    if st.button("Estimate the Price", use_container_width=True):
+        payload= {
+            "property_type": property_type.upper(),
+            "living_area_mq": living_area_m2,
+            "bedrooms": bedrooms,
+            "epc_score": epc_score,
+            "postal_code": postal_code
+        }
+
+        with st.spinner("We are querying the ImmoEliza servers..."):
+            try:
+                response = requests.post("https://immo-eliza-api-n2lj.onrender.com")
+                if response.status_code == 200:
+                    prediction = response.json().get("prediction", 0)
+                    st.success(f"Estimated Market price for this property is {prediction:,.2f} €")
+                else:
+                    st.error(f"API error ({response.status_code}): {response.text}")
+            except Exception as e:
+                st.error(f"Network error: {e}")
+
+# --- INVESTOR INTERFACE ---
+def render_investor_interface():
+    st.header("Investments and ROI Simulator")
+    
+    # province selection for viewing statistics
+    selected_province = st.multiselect(
+        "Select provinces where you intend to build or invest:",
+        df_stats["province"].unique()
+    )
+
+    # extracting data
+    prov_data = df_stats[df_stats['province'].isin(selected_province)]
+
+    # metrics viz
+    st.subheader(f"Current Market Indicators for {", ".join(selected_province)}")
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric(
+        label="Mean Price per m²", 
+        value=f"{prov_data['mean_price_mq']:.2f} €/m²"
+        )
+    m2.metric(
+        label="Urban Density Index (Mean)", 
+        value=f"{prov_data['mean_urban_density']:.1f}"
+    )
+    m3.metric(
+        label="Active Listing Volume",
+        value=f"{int(prov_data['properties_total']):,}".replace(",", ".")
+    )
+    m4.metric(
+        label="Green Real Estate Share (A/B)",
+        value=f"{prov_data['green_properties_ratio']:.1f} %",
+        help="Percentage of properties in the province with an energy efficiency rating between A++ and B-"
+    )
+    
+    st.markdown("---")
+
+    # MAP
+    st.subheader(f"Real estate density map in {", ".join(selected_province)}")
+    st.map(df_map)
+
+    st.markdown("---")
+
+    st.subjeader("Configure Your Hypothetical Construction Project")
+
+    # widgets for simulating future construction
+    c1, c2 = st.columns(2)
+    with c1:
+        proj_type = st.radio("Select the kind of proeprty you want to build", ["House", "Apartment"])
+        proj_area = st.number_input("Expected Total Project Area (m²)", min_value=50, value=200)
+        if proj_type == "Apartment":
+            facades = st.slider("Insert number of facades (a default value will be used if no value is given)", min_value=1, max_value=4)
+            floor_number = st.number_input("Insert number of floor (a default value will be used if no value is given)", min_value=0, max_value=50)
+        else:
+            has_garden = st.checkbox(f"{proj_type} has a garden")
+            if has_garden:
+                garden_area_m2 = st.number_input("Insert expected surface area for garden (m²)", min_value=1, max_value=1000)
+        proj_type_rooms = st.slider("The number of bedrooms expected for property (a default value will be used in case no value is given)", min_value=1, max_value=10, value=1)
+        if not proj_type_rooms:
+            proj_type_rooms = 3 if proj_type == "House" else 2
+        final_epc_score = st.selectbpox("Select the desired EPC score for the new properties", )
+    with c2:
+        estimated_cost = st.number_input("Insert the estimated construction cost (€)", min_value=10000, value= 250000, step=5000)
+
+    if st.button("estimate the Financial Sustainability and ROI", user_container_width=True):
+        payload = {
+            "property_type": proj_type.upper(),
+            "bedrooms": proj_type_rooms,
+            "living_area_m2": proj_area,
+            "province": selected_province,
+            "epc_score": final_epc_score,
+
+            # default values for API mandatory info
+            "postal_code": 1000,  # fallback value
+
+            # optional
+            "state_of_the_building": "New",
+            "facades": 4 if proj_type == "House" else facades,
+            "bathrooms": 2 if proj_type == "House" else 1,
+            "garden_area_m2": garden_area_m2,
+            "furnished": False,
+            "floor_number": 1 if proj_type == floor_number else None,
+
+            # region
+            "region": "Brussels Capital Region" if selected_province == "Brussels" else (
+                "Flanders" if selected_province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"] else "Wallonia"
+            )
+
+        }
+
+        with st.spinner("We are calculating the future resale value..."):
+            try:
+                response = requests.post("https://immo-eliza-api-n2lj.onrender.com")
+                if response.status_code == 200:
+                    predicted_revenue = response.json().get("prediction", 0)
+                    net_profit = predicted_revenue - estimated_cost
+                    roi = (net_profit / estimated_cost) * 100
+
+                    st.markdown()
+                    res_col1, res_col2 = st.columns(2)
+                    res_col1.metric("Estimated Sale Value (Revenue)", f"{predicted_revenue:,.2f} €")
+                    if net_profit > 0:
+                        st.success(f"Estimated Profit: {net_profit:,.2f} € (ROI: {ROI:.1f}%)")
+                    else:
+                        st.error(f"Financial Loss Risk: {net_profit:,.2f} € (ROI: {ROI:.1f}%)")
+                else:
+                    st.error("Unable to generate an estimate for this combination.")
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+# --- Interface Routing Activation ---
+if "Buyer " in user:
+    render_buyer_interface()
+else:
+    render_investor_interface()
