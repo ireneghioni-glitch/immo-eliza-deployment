@@ -70,6 +70,7 @@ class PropertyData(BaseModel):
     region: Union[Literal['Wallonia', 'Flanders', 'Brussels'], None] = None
     province: Union[Literal['Namur', 'Antwerp', 'Hainaut', 'Limburg', 'Brussels Capital Region', 'Walloon Brabant', 'East Flanders', 'Luxembourg', 'West Flanders', 'Liège', 'Flemish Brabant'], None] = None
     floor_number: Union[int, None] = None
+    floors_total: Union[int, None] = None
     bathrooms: Union[int, None] = None
     
 
