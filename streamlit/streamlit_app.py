@@ -32,6 +32,11 @@ st.sidebar.markdown("---")
 
 # --- loading data ---
 @st.cache_data
+def load_data_for_buyer():
+    df_stats = pd.read_csv(PROV_STATS)
+    return df_stats
+
+@st.cache_data
 def load_data_for_investor():
     df_stats = pd.read_csv(PROV_STATS)
     df_map = pd.read_csv(MAP)
@@ -39,10 +44,11 @@ def load_data_for_investor():
 
 
 # --- BUYER INTERFACE ---
-def render_buyer_interface(df_stats):
+def render_buyer_interface():
     st.header("Verify Market Value of a Property")
     st.subheader("Insert details about the property you are considering to buy")
 
+    df_stats = load_data_for_buyer()
     postal_codes_by_prov_df = df_stats.groupby('province')['postal_code'].unique().apply(list).to_dict()
 
     list_namur = postal_codes_by_prov_df.get("Namur", [])
@@ -71,7 +77,6 @@ def render_buyer_interface(df_stats):
         "Flemish Brabant": list_flemish_brabant
     }
     
-
     # organization of inputs in 2 columns
     col1, col2 = st.columns(2)
 
@@ -105,14 +110,22 @@ def render_buyer_interface(df_stats):
 
     st.markdown("---")
 
+    # search for the province given the postal code
+    found_province = "Unknown"
+    for province, postal_codes in postal_codes_by_prov.items():
+        if postal_code in postal_codes:
+            found_province = province
+            break
+    
+    if province == "Brussels":
+        region = "Brussels Capital Region"
+    elif province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"]:
+        region = "Flanders"
+    else:
+        region = "Wallonia"
+    
     # Button
     if st.button("Estimate the Price", use_container_width=True):
-        # search for the province given the postal code
-        found_province = "Unknown"
-        for province, postal_codes in postal_codes_by_prov.items():
-            if postal_code in postal_codes:
-                found_province = province
-                break
 
         payload= {
             "property_type": property_type.capitalize(),
@@ -131,8 +144,7 @@ def render_buyer_interface(df_stats):
 
             # province and region
             "province": province,
-            "region": "Brussels Capital Region" if province == "Brussels" else (
-            "Flanders": if selected_province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"]) else "Wallonia"
+            "region": region
         }
 
         with st.spinner("We are querying the ImmoEliza servers..."):
