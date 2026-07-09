@@ -72,17 +72,17 @@ def render_buyer_interface():
     list_flemish_brabant = postal_codes_by_prov_df.get("Flemish Brabant", [])
 
     postal_codes_by_prov = {
-        "Namur": list_namur,
-        "Antwerp": list_antwerp,
-        "Hainaut": list_hainaut,
-        "Limburg": list_limburg,
-        "Brussels": list_brussels,
-        "Walloon Brabant": list_walloon_brabant,
-        "East Flanders": list_east_flanders,
-        "Luxembourg": list_luxembourg,
-        "West Flanders": list_west_flanders,
-        "Liège": list_liege,
-        "Flemish Brabant": list_flemish_brabant
+        "Namur": [str(x) for x in list_namur],
+        "Antwerp": [str(x) for x in list_antwerp],
+        "Hainaut": [str(x) for x in list_hainaut],
+        "Limburg": [str(x) for x in list_limburg],
+        "Brussels": [str(x) for x in list_brussels],
+        "Walloon Brabant": [str(x) for x in list_walloon_brabant],
+        "East Flanders": [str(x) for x in list_east_flanders],
+        "Luxembourg": [str(x) for x in list_luxembourg],
+        "West Flanders": [str(x) for x in list_west_flanders],
+        "Liège": [str(x) for x in list_liege],
+        "Flemish Brabant": [str(x) for x in list_flemish_brabant]
     }
     
     # organization of inputs in 2 columns
