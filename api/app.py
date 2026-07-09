@@ -67,8 +67,8 @@ class PropertyData(BaseModel):
     building_year: Union[int, None] = None
     state_of_the_building: Union[Literal['To demolish', 'To restore', 'To renovate', 'Normal', 'Fully renovated', 'under construction', 'New'], None] = None
     kitchen_equipped: Union[Literal['Not equipped', 'Partially equipped', 'Fully equipped', 'Super equipped'], None] = None
-    region: Union[Literal['Wallonia', 'Flanders', 'Brussels'], None] = None
-    province: Union[Literal['Namur', 'Antwerp', 'Hainaut', 'Limburg', 'Brussels Capital Region', 'Walloon Brabant', 'East Flanders', 'Luxembourg', 'West Flanders', 'Liège', 'Flemish Brabant'], None] = None
+    region: Union[Literal['Wallonia', 'Flanders', 'Brussels Capital Region'], None] = None
+    province: Union[Literal['Namur', 'Antwerp', 'Hainaut', 'Limburg', 'Brussels', 'Walloon Brabant', 'East Flanders', 'Luxembourg', 'West Flanders', 'Liège', 'Flemish Brabant'], None] = None
     floor_number: Union[int, None] = None
     floors_total: Union[int, None] = None
     bathrooms: Union[int, None] = None
