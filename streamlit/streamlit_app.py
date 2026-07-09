@@ -54,36 +54,6 @@ def render_buyer_interface():
     floors_total = 0
     total_area_m2 = 0
     living_area_m2 = 0
-
-    df_stats = load_data_for_buyer()
-    df_stats.columns = df_stats.columns.str.strip()
-    postal_codes_by_prov_df = df_stats.groupby('province')['postal_code'].unique().apply(list).to_dict()
-
-    list_namur = postal_codes_by_prov_df.get("Namur", [])
-    list_antwerp = postal_codes_by_prov_df.get("Antwerp", [])
-    list_hainaut = postal_codes_by_prov_df.get("Hainaut", [])
-    list_limburg = postal_codes_by_prov_df.get("Limburg", [])
-    list_brussels = postal_codes_by_prov_df.get("Brussels", [])
-    list_walloon_brabant = postal_codes_by_prov_df.get("Walloon Brabant", [])
-    list_east_flanders = postal_codes_by_prov_df.get("East Flanders", [])
-    list_luxembourg = postal_codes_by_prov_df.get("Luxembourg", [])
-    list_west_flanders = postal_codes_by_prov_df.get("West Flanders", [])
-    list_liege = postal_codes_by_prov_df.get("Liège", [])
-    list_flemish_brabant = postal_codes_by_prov_df.get("Flemish Brabant", [])
-
-    postal_codes_by_prov = {
-        "Namur": [str(x) for x in list_namur],
-        "Antwerp": [str(x) for x in list_antwerp],
-        "Hainaut": [str(x) for x in list_hainaut],
-        "Limburg": [str(x) for x in list_limburg],
-        "Brussels": [str(x) for x in list_brussels],
-        "Walloon Brabant": [str(x) for x in list_walloon_brabant],
-        "East Flanders": [str(x) for x in list_east_flanders],
-        "Luxembourg": [str(x) for x in list_luxembourg],
-        "West Flanders": [str(x) for x in list_west_flanders],
-        "Liège": [str(x) for x in list_liege],
-        "Flemish Brabant": [str(x) for x in list_flemish_brabant]
-    }
     
     # organization of inputs in 2 columns
     col1, col2 = st.columns(2)
@@ -118,12 +88,6 @@ def render_buyer_interface():
 
     st.markdown("---")
 
-    # search for the province given the postal code
-    found_province = "Unknown"
-    for province, postal_codes in postal_codes_by_prov.items():
-        if postal_code in postal_codes:
-            found_province = province
-            break
     
     if province == "Brussels":
         region = "Brussels Capital Region"
