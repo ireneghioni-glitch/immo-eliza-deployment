@@ -86,7 +86,7 @@ def read_root():
 
 # POST route for data Injection and Elaboration
 # creating an endpoint that listens to POST requests
-@app.post("/predict") # "/predict"
+@app.post("/") # "/predict"
 def predict_property_price(sale_expectation: PropertyData):
     # data from user is still in JSON format
 
