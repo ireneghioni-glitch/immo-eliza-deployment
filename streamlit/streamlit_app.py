@@ -52,7 +52,8 @@ def render_buyer_interface():
     garden_area_mq = 0
     floor_number = 0
     floors_total = 0
-    total_area_m2 = living_area_m2
+    total_area_m2 = 0
+    living_area_m2 = 0
 
     df_stats = load_data_for_buyer()
     df_stats.columns = df_stats.columns.str.strip()
@@ -93,6 +94,8 @@ def render_buyer_interface():
         if property_type == "Apartment":
             floor_number = st.number_input("Property Floor", "Insert the floor number", min_value=0, max_value=50)
             floors_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
+            if not floors_total:
+                floors_total = floor_number
         living_area_m2 = st.number_input("Habitable floor area", min_value=1)
         bedrooms = st.slider("Number of bedrooms", min_value=1, max_value=10, value=1)
         bathrooms = st.slider("Number of bathrooms", min_value=1, max_value=5, value=1)
@@ -145,7 +148,7 @@ def render_buyer_interface():
             "bathrooms": 2 if property_type == "House" else 1,
             "garden_area_m2": garden_area_mq,
             "furnished": False,
-            "floor_number": 1 if property_type == "Apartment" else None,
+            "floor_number": floor_number if property_type == "Apartment" else 0,
 
             # province and region
             "province": province,
@@ -171,7 +174,7 @@ def render_investor_interface():
     # default variables
     facades = 1
     floor_number = 0
-    floors_total = floor_number
+    floors_total = 0
     garden_area_m2 = 0.0
 
     df_stats, df_map = load_data_for_investor()
@@ -233,6 +236,9 @@ def render_investor_interface():
             if proj_type == "Apartment":
                 facades = st.slider("Insert number of facades (a default value will be used if no value is given)", min_value=1, max_value=4)
                 floor_number = st.number_input("Insert number of floor (a default value will be used if no value is given)", min_value=0, max_value=50)
+                floors_total = st.number_input("Insert number of floor (a default value will be used if no value is given)", min_value=0, max_value=50)
+                if not floors_total:
+                    floors_total = floor_number
             else:
                 has_garden = st.checkbox(f"{proj_type} has a garden")
                 if has_garden:
