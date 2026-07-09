@@ -39,9 +39,39 @@ def load_data_for_investor():
 
 
 # --- BUYER INTERFACE ---
-def render_buyer_interface():
+def render_buyer_interface(df_stats):
     st.header("Verify Market Value of a Property")
     st.subheader("Insert details about the property you are considering to buy")
+
+    postal_codes_by_prov_df = df_stats.groupby('province')['postal_code'].unique().apply(list).to_dict()
+
+    list_namur = postal_codes_by_prov_df.get("Namur", [])
+    list_antwerp = postal_codes_by_prov_df.get("Antwerp", [])
+    list_hainaut = postal_codes_by_prov_df.get("Hainaut", [])
+    list_limburg = postal_codes_by_prov_df.get("Limburg", [])
+    list_brussels = postal_codes_by_prov_df.get("Brussels", [])
+    list_walloon_brabant = postal_codes_by_prov_df.get("Walloon Brabant", [])
+    list_east_flanders = postal_codes_by_prov_df.get("East Flanders", [])
+    list_luxembourg = postal_codes_by_prov_df.get("Luxembourg", [])
+    list_west_flanders = postal_codes_by_prov_df.get("West Flanders", [])
+    list_liege = postal_codes_by_prov_df.get("Liège", [])
+    list_flemish_brabant = postal_codes_by_prov_df.get("Flemish Brabant", [])
+
+    postal_codes_by_prov = {
+        "Namur": list_namur,
+        "Antwerp": list_antwerp,
+        "Hainaut": list_hainaut,
+        "Limburg": list_limburg,
+        "Brussels": list_brussels,
+        "Walloon Brabant": list_walloon_brabant,
+        "East Flanders": list_east_flanders,
+        "Luxembourg": list_luxembourg,
+        "West Flanders": list_west_flanders,
+        "Liège": list_liege,
+        "Flemish Brabant": list_flemish_brabant
+    }
+    
+
     # organization of inputs in 2 columns
     col1, col2 = st.columns(2)
 
@@ -77,16 +107,37 @@ def render_buyer_interface():
 
     # Button
     if st.button("Estimate the Price", use_container_width=True):
+        # search for the province given the postal code
+        found_province = "Unknown"
+        for province, postal_codes in postal_codes_by_prov.items():
+            if postal_code in postal_codes:
+                found_province = province
+                break
+
         payload= {
             "property_type": property_type.capitalize(),
             "living_area_m2": living_area_m2,
             "bedrooms": bedrooms,
             "epc_score": epc_score,
-            "postal_code": postal_code
+            "postal_code": postal_code,
+
+            # optional
+            "state_of_the_building": "New",
+            "facades": 4 if property_type == "House" else facades,
+            "bathrooms": 2 if property_type == "House" else 1,
+            "garden_area_m2": garden_area_mq,
+            "furnished": False,
+            "floor_number": 1 if property_type == "Apartment" else None,
+
+            # province and region
+            "province": province,
+            "region": "Brussels Capital Region" if province == "Brussels" else (
+            "Flanders": if selected_province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"]) else "Wallonia"
         }
 
         with st.spinner("We are querying the ImmoEliza servers..."):
             try:
+                st.write("DEBUG PAYLOAD:", payload)
                 response = requests.post("https://immo-eliza-api-n2lj.onrender.com", json=payload)
                 if response.status_code == 200:
                     prediction = response.json().get("prediction", 0)
