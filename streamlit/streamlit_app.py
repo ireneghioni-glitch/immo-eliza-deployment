@@ -48,7 +48,14 @@ def render_buyer_interface():
     st.header("Verify Market Value of a Property")
     st.subheader("Insert details about the property you are considering to buy")
 
+    # default variables
+    garden_area_mq = 0
+    floor_number = 0
+    floors_total = 0
+    total_area_m2 = living_area_m2
+
     df_stats = load_data_for_buyer()
+    df_stats.columns = df_stats.columns.str.strip()
     postal_codes_by_prov_df = df_stats.groupby('province')['postal_code'].unique().apply(list).to_dict()
 
     list_namur = postal_codes_by_prov_df.get("Namur", [])
@@ -85,19 +92,17 @@ def render_buyer_interface():
         property_type = st.radio("Kind of property", ["House", "Apartment"])
         if property_type == "Apartment":
             floor_number = st.number_input("Property Floor", "Insert the floor number", min_value=0, max_value=50)
-            floor_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
+            floors_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
         living_area_m2 = st.number_input("Habitable floor area", min_value=1)
         bedrooms = st.slider("Number of bedrooms", min_value=1, max_value=10, value=1)
         bathrooms = st.slider("Number of bathrooms", min_value=1, max_value=5, value=1)
         has_terrace = st.checkbox("Has terrace")
-        if has_terrace:
-            terrace_area_mq = st.number_input("Terrace area", min_value=1)
         has_garden = st.checkbox("Has garden")
         if has_garden:
             garden_area_mq = st.number_input("Garden area", min_value=1)
         epc_score = st.selectbox("Select the EPC score", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
         state_of_the_building = st.selectbox("Select the state of the property", ['New', 'under construction', 'Fully renovated', 'Normal', 'To renovate', 'To restore', 'To demolish'])
-        year_of_construction = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
+        building_year = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
         facades = st.slider("Number of facades", min_value=1, max_value=4)
         kitchen_equipped = st.selectbox("Select level of kitchen equippment", ['Not equipped', 'Partially equipped', 'Fully equipped', 'Super equipped'])
         furnished = st.checkbox(f"{property_type} is furnished")
@@ -165,7 +170,8 @@ def render_investor_interface():
 
     # default variables
     facades = 1
-    floor_number = None
+    floor_number = 0
+    floors_total = floor_number
     garden_area_m2 = 0.0
 
     df_stats, df_map = load_data_for_investor()
