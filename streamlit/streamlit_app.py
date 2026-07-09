@@ -54,6 +54,7 @@ def render_buyer_interface():
     floors_total = 0
     total_area_m2 = 0
     living_area_m2 = 0
+    kitchen_equipped = "Not equipped"
     
     # organization of inputs in 2 columns
     col1, col2 = st.columns(2)
