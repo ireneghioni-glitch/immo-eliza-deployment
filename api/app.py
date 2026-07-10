@@ -56,7 +56,7 @@ class PropertyData(BaseModel):
     living_area_m2: int
     property_type: Union[Literal["House", "Apartment"], None] = None
     bedrooms: int
-    postal_code: str
+    postal_code: int
     epc_score: Literal['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++']
     total_area_m2: Union[int, None] = None
     has_garden: Union[bool, None] = None
@@ -98,14 +98,14 @@ def predict_property_price(sale_expectation: PropertyData):
     # obj of PropertyData class (with data from user) is now a Python dictionary
 
     pc = data.get("postal_code")
-    geo_data = GEO_MAPPING.get(int(pc) if str(pc).isdigit() else None)
+    geo_data = GEO_MAPPING.get(pc)
 
     if geo_data and "latitude" in geo_data and "longitude" in geo_data:
         data["latitude"] = float(geo_data["latitude"])
         data["longitude"] = float(geo_data["longitude"])
     else:
         # safety fallback
-        data["latitude"] = 50.8503  
+        data["latitude"] = 50.8503
         data["longitude"] = 4.3517
 
     try:
