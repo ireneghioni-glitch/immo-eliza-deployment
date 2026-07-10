@@ -7,48 +7,6 @@ from pathlib import Path
 # --- Initial configuration ---
 st.set_page_config(page_title="immoEliza Properties Predictive Tool", layout="wide")
 
-# --- INTERFACE COLORS & APPEARENCE ---
-st.markdown(
-    """
-    <style>
-    /* Mean Background */
-    .stApp {
-        background-color: #0A192F;
-    }
-    /* Coloring native sidebar */
-    [data-testid="stHeader"] {
-        background-color: #0A192F !important;
-    }
-    /* Sidebar Background */
-    [data-testid="stSidebar"] {
-        background-color: #172A45 !important;
-    }
-    /* Main text colors */
-    h1, h2, h3, p, span, label {
-        color: #F4F7F9 !important;
-    }
-    /* Text inside selection boxes and numericl inputs */
-    .stSelectbox div, .stNumberInput input, .stTextInput input {
-        color: #0A192F !important; /* Mantiene il testo dentro i widget leggibile su sfondo bianco */
-    }
-    /* 2. BUTTONS STYLE: color and text */
-    div.stButton > button {
-        background-color: #B9A6E8 !important;
-        color: white !important;
-        border: none;
-        font-size: 18px !important;  /* Incrementa la dimensione del font */
-        font-weight: bold !important;  /* Forzatura testo in grassetto */
-        padding: 10px 24px !important;
-    }
-    div.stButton > button:hover {
-        background-color: #9D8DC5 !important; /* darker rose while pointing with mouse */
-        color: white !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 
 
 # --- Paths and Constants ---------------------------------
@@ -81,6 +39,14 @@ PROVINCE_POSTAL_CODES = {
 # --- sidebar configuration ---
 st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 st.sidebar.title("🏠 ImmoEliza Hub")
+
+
+page = st.sidebar.radio(
+    "Naviga nel portale:",
+    ["Buyer Analytics", "Investor Simulator"]
+)
+
+st.sidebar.markdown("---")
 
 
 # --- loading data ---
@@ -153,7 +119,7 @@ def render_buyer_interface():
         region = "Wallonia"
     
     # Button
-    if st.button("Estimate the Price"):
+    if st.button("Estimate the Price", use_container_width=True):
 
         payload= {
             "property_type": property_type.capitalize(),
@@ -291,7 +257,7 @@ def render_investor_interface():
         with c2:
             estimated_cost = st.number_input("Insert the estimated construction cost (€)", min_value=10000, value= 250000, step=5000)
 
-        if st.button("estimate the Financial Sustainability and ROI"):
+        if st.button("estimate the Financial Sustainability and ROI", use_container_width=True):
             payload = {
                 "property_type": proj_type.capitalize(),
                 "bedrooms": int(proj_type_rooms),
@@ -344,14 +310,9 @@ def render_investor_interface():
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-# --- 3. MULTIPAGE CONFIGURATION (WEBSITE) ---
 
-# Declare logical pages pairing them with functions
-buyer_page = st.Page(render_buyer_interface, title="Buyer Analytics", icon="🛒")
-investor_page = st.Page(render_investor_interface, title="Investor Simulator", icon="📈")
-
-# activating native navigation
-pg = st.navigation([buyer_page, investor_page])
-
-# executing selected page
-pg.run()
+# Execute fuction associated to the selected page
+if page == "Buyer Analytics":
+    render_buyer_interface()
+else:
+    render_investor_interface()
