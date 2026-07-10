@@ -17,6 +17,23 @@ BASE_DIR = Path(__file__).resolve().parent
 MAP = BASE_DIR / "map_for_inv_app.csv"
 PROV_STATS = BASE_DIR / "province_stats_for_inv_app.csv"
 
+# --- Constants ------------------------------------------
+
+PROVINCE_POSTAL_CODES = {
+        "Brussels": "1000",
+        "Antwerp": "2000",
+        "East Flanders": "9000",
+        "Flemish Brabant": "3000",
+        "Limburg": "3500",
+        "West Flanders": "8000",
+        "Hainaut": "7000",
+        "Liège": "4000",
+        "Luxembourg": "6700",
+        "Namur": "5000",
+        "Walloon Brabant": "1300"
+    }
+
+
 # --- sidebar configuration ---
 # st.sidebar.imag("immoeliza_logo")
 st.sidebar.title("🏠 ImmoEliza Hub")
@@ -144,12 +161,6 @@ def render_buyer_interface():
 def render_investor_interface():
     st.header("Investments and ROI Simulator")
 
-    # default variables
-    facades = 1
-    floor_number = 0
-    floors_total = 0
-    garden_area_m2 = 0.0
-
     df_stats, df_map = load_data_for_investor()
     
     # province selection for viewing statistics
@@ -157,6 +168,9 @@ def render_investor_interface():
         "Select the province where you intend to build or invest:",
         df_stats["province"].unique()
     )
+
+    # default postal code for picked province
+    selected_postal_code = PROVINCE_POSTAL_CODES.get(selected_province, "1000")
 
     if not selected_province:
         st.info("Select at least one province from the menu to visualize valuable market indicators.")
@@ -202,49 +216,65 @@ def render_investor_interface():
 
         st.markdown("---")
 
+        # default variables
+        kitchen_equipped = "Not equipped"
+        has_terrace = False
+        floor_number = 0
+        floors_total = 1
+        garden_area_m2 = 0
+
         st.subheader("Configure Your Hypothetical Construction Project")
 
         # widgets for simulating future construction
         c1, c2 = st.columns(2)
         with c1:
+            building_year = st.number_input("Expected year for construction", min_value=2026, value=2026)
             proj_type = st.radio("Select the kind of proeprty you want to build", ["House", "Apartment"])
             proj_area = st.number_input("Expected Total Project Area (m²)", min_value=50, value=200)
+            has_garden = st.checkbox(f"{proj_type} has a garden")
+            if has_garden:
+                garden_area_m2 = st.number_input("Insert expected surface area for garden (m²)", min_value=1, max_value=1000)
+            facades = st.slider("Insert number of facades", min_value=1, max_value=4, help="A default value will be used if no value is given")
+            
             if proj_type == "Apartment":
-                facades = st.slider("Insert number of facades", min_value=1, max_value=4, help="A default value will be used if no value is given")
+                has_terrace = st.checkbox("Has terrace")
                 floor_number = st.number_input("Insert number of floor", min_value=0, max_value=50, help="A default value will be used if no value is given")
-                floors_total = st.number_input("Insert total floors of the building", min_value=0, max_value=50, help="A default value will be used if no value is given")
+                floors_total = st.number_input("Insert total floors of the building", min_value=floor_number, max_value=50, help="A default value will be used if no value is given")
                 if not floors_total:
                     floors_total = floor_number
             else:
-                has_garden = st.checkbox(f"{proj_type} has a garden")
-                if has_garden:
-                    garden_area_m2 = st.number_input("Insert expected surface area for garden (m²)", min_value=1, max_value=1000)
+                floors_total = st.number_input("Insert total floors of the building", min_value=0, max_value=50, help="A default value will be used if no value is given")
+            
             proj_type_rooms = st.slider("The number of bedrooms expected for property (a default value will be used in case no value is given)", min_value=1, max_value=10, value=1)
-            if not proj_type_rooms:
-                proj_type_rooms = 3 if proj_type == "House" else 2
             final_epc_score = st.selectbox("Select the desired EPC score for the new properties", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
+        
         with c2:
             estimated_cost = st.number_input("Insert the estimated construction cost (€)", min_value=10000, value= 250000, step=5000)
 
         if st.button("estimate the Financial Sustainability and ROI", use_container_width=True):
             payload = {
                 "property_type": proj_type.capitalize(),
-                "bedrooms": proj_type_rooms,
+                "bedrooms": int(proj_type_rooms),
                 "living_area_m2": int(proj_area),
+                "total_area_m2": int(proj_area + garden_area_m2),
                 "province": selected_province,
                 "epc_score": final_epc_score,
 
                 # default values for API mandatory info
-                "postal_code": "1000",  # fallback value
+                "postal_code": selected_postal_code,  # default value given by selected province 1000 as fallback value
 
                 # optional
                 "state_of_the_building": "New",
-                "facades": 4 if proj_type == "House" else facades,
-                "bathrooms": 2 if proj_type == "House" else 1,
-                "garden_area_m2": garden_area_m2,
+                "facades": int(facades),
+                "bathrooms": int(2 if proj_type == "House" else 1),
+                "garden_area_m2": int(garden_area_m2),
                 "total_area_m2": int(proj_area + garden_area_m2),
                 "furnished": False,
-                "floor_number": int(floor_number if proj_type == "Apartment" else 0),
+                "floor_number": int(floor_number),
+                "floors_total": int(floors_total),
+                "kitchen_equipped": kitchen_equipped,
+                "has_terrace": bool(has_terrace),
+                "building_year": int(building_year),
 
                 # region
                 "region": "Brussels Capital Region" if selected_province == "Brussels" else (
