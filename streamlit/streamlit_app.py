@@ -53,7 +53,6 @@ def render_buyer_interface():
     floor_number = 0
     floors_total = 0
     total_area_m2 = 0
-    living_area_m2 = 0
     kitchen_equipped = "Not equipped"
     
     # organization of inputs in 2 columns
@@ -63,8 +62,8 @@ def render_buyer_interface():
     with col1:
         property_type = st.radio("Kind of property", ["House", "Apartment"])
         if property_type == "Apartment":
-            floor_number = st.number_input("Property Floor", "Insert the floor number", min_value=0, max_value=50)
-            floors_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
+            floor_number = st.number_input("Property Floor", min_value=0, max_value=50, help="Insert the floor number")
+            floors_total = st.number_input("Total Floors", min_value=1, max_value=50, help="Insert total floors number of the building")
             if not floors_total:
                 floors_total = floor_number
         living_area_m2 = st.number_input("Habitable floor area (m²)", min_value=1)
@@ -74,7 +73,9 @@ def render_buyer_interface():
         has_garden = st.checkbox("Has garden")
         if has_garden:
             garden_area_mq = st.number_input("Garden area (m²)", min_value=1)
-        total_area_m2 = st.number_input("Total area of property (m²)", min_value=living_area_m2)
+        # calculate default total area for total_area_m2
+        default_total_area = living_area_m2 + garden_area_mq if has_garden else living_area_m2
+        total_area_m2 = st.number_input("Total area of property (m²)", min_value=living_area_m2, value=default_total_area)
         epc_score = st.selectbox("Select the EPC score", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
         state_of_the_building = st.selectbox("Select the state of the property", ['New', 'under construction', 'Fully renovated', 'Normal', 'To renovate', 'To restore', 'To demolish'])
         building_year = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
@@ -101,11 +102,6 @@ def render_buyer_interface():
     # Button
     if st.button("Estimate the Price", use_container_width=True):
 
-        if has_garden and (total_area_m2 == living_area_m2):
-            v_total_area = living_area_m2 + garden_area_mq
-        else:
-            v_total_area = total_area_m2
-
         payload= {
             "property_type": property_type.capitalize(),
             "living_area_m2": living_area_m2,
@@ -121,7 +117,7 @@ def render_buyer_interface():
             "furnished": furnished,
             "floor_number": floor_number if property_type == "Apartment" else 0,
             "floors_total": floors_total if floors_total != 0 else floor_number,
-            "total_area_m2": v_total_area,
+            "total_area_m2": int(total_area_m2),
             "kitchen_equipped": kitchen_equipped,
             "has_terrace": has_terrace,
             "has_garden": has_garden,
@@ -231,18 +227,19 @@ def render_investor_interface():
             payload = {
                 "property_type": proj_type.capitalize(),
                 "bedrooms": proj_type_rooms,
-                "living_area_m2": proj_area,
+                "living_area_m2": int(proj_area),
                 "province": selected_province,
                 "epc_score": final_epc_score,
 
                 # default values for API mandatory info
-                "postal_code": 1000,  # fallback value
+                "postal_code": "1000",  # fallback value
 
                 # optional
                 "state_of_the_building": "New",
                 "facades": 4 if proj_type == "House" else facades,
                 "bathrooms": 2 if proj_type == "House" else 1,
                 "garden_area_m2": garden_area_m2,
+                "living_area_m2": int(proj_area + garden_area_m2),
                 "furnished": False,
                 "floor_number": 1 if proj_type == "Apartment" else None,
 

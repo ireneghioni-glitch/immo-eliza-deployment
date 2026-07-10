@@ -72,6 +72,8 @@ class PropertyData(BaseModel):
     floor_number: Union[int, None] = None
     floors_total: Union[int, None] = None
     bathrooms: Union[int, None] = None
+    latitude: Union[float, None] = None
+    longitude: Union[float, None] = None
     
 
     
@@ -94,6 +96,17 @@ def predict_property_price(sale_expectation: PropertyData):
     # access to Pydantic obj values
     data = sale_expectation.model_dump()
     # obj of PropertyData class (with data from user) is now a Python dictionary
+
+    pc = data.get("postal_code")
+    geo_data = GEO_MAPPING.get(str(pc)) or GEO_MAPPING.get(int(pc) if str(pc).isdigit() else None)
+
+    if geo_data and "latitude" in geo_data and "longitude" in geo_data:
+        data["latitude"] = float(geo_data["latitude"])
+        data["longitude"] = float(geo_data["longitude"])
+    else:
+        # safety fallback
+        data["latitude"] = 50.8503  
+        data["longitude"] = 4.3517
 
     try:
 
