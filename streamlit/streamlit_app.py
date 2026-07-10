@@ -78,7 +78,7 @@ def render_buyer_interface():
         total_area_m2 = st.number_input("Total area of property (m²)", min_value=living_area_m2, value=default_total_area)
         epc_score = st.selectbox("Select the EPC score", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
         state_of_the_building = st.selectbox("Select the state of the property", ['New', 'under construction', 'Fully renovated', 'Normal', 'To renovate', 'To restore', 'To demolish'])
-        building_year = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
+        building_year = st.number_input("Insert year of construction", min_value=1000, max_value=2099, help="A default value will be used if no value is given")
         facades = st.slider("Number of facades", min_value=1, max_value=4)
         kitchen_equipped = st.selectbox("Select level of kitchen equippment", ['Not equipped', 'Partially equipped', 'Fully equipped', 'Super equipped'])
         furnished = st.checkbox(f"{property_type} is furnished")
@@ -86,7 +86,7 @@ def render_buyer_interface():
     with col2:
         region = st.selectbox("Select the region", ["Wallonia", "Flanders", "Brussels Capital Region"])
         province = st.selectbox("Select the province", ["Namur", "Antwerp", "Hainaut", "Limburg", "Brussels", "Walloon Brabant", "East Flanders", "Luxembourg", "West Flanders", "Liège", "Flemish Brabant"])
-        postal_code = st.text_input("Post Code", "Insert a valid postal code")
+        postal_code = st.text_input("Post Code", value="1000", help="Insert a valid postal code")
     
 
     st.markdown("---")
@@ -207,9 +207,9 @@ def render_investor_interface():
             proj_type = st.radio("Select the kind of proeprty you want to build", ["House", "Apartment"])
             proj_area = st.number_input("Expected Total Project Area (m²)", min_value=50, value=200)
             if proj_type == "Apartment":
-                facades = st.slider("Insert number of facades (a default value will be used if no value is given)", min_value=1, max_value=4)
-                floor_number = st.number_input("Insert number of floor (a default value will be used if no value is given)", min_value=0, max_value=50)
-                floors_total = st.number_input("Insert number of floor (a default value will be used if no value is given)", min_value=0, max_value=50)
+                facades = st.slider("Insert number of facades", min_value=1, max_value=4, help="A default value will be used if no value is given")
+                floor_number = st.number_input("Insert number of floor", min_value=0, max_value=50, help="A default value will be used if no value is given")
+                floors_total = st.number_input("Insert number of floor", min_value=0, max_value=50, help="A default value will be used if no value is given")
                 if not floors_total:
                     floors_total = floor_number
             else:
