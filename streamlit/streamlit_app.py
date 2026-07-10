@@ -168,6 +168,7 @@ def render_investor_interface():
         "Select the province where you intend to build or invest:",
         df_stats["province"].unique()
     )
+    api_province = "Brussels" if selected_province == "Brussels Capital Region" else selected_province
 
     # default postal code for picked province
     selected_postal_code = PROVINCE_POSTAL_CODES.get(selected_province, "1000")
@@ -257,7 +258,7 @@ def render_investor_interface():
                 "bedrooms": int(proj_type_rooms),
                 "living_area_m2": int(proj_area),
                 "total_area_m2": int(proj_area + garden_area_m2),
-                "province": selected_province,
+                "province": api_province,,
                 "epc_score": final_epc_score,
 
                 # default values for API mandatory info
@@ -277,8 +278,8 @@ def render_investor_interface():
                 "building_year": int(building_year),
 
                 # region
-                "region": "Brussels Capital Region" if selected_province == "Brussels" else (
-                "Flanders" if selected_province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"] else "Wallonia"
+                "region": "Brussels Capital Region" if api_province == "Brussels" else (
+                    "Flanders" if api_province in ["Antwerp", "Limburg", "East Flanders", "West Flanders", "Flemish Brabant"] else "Wallonia"
                 )
 
             }
