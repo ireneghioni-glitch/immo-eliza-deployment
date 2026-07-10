@@ -13,15 +13,19 @@ st.markdown(
     <style>
     /* Mean Background */
     .stApp {
-        background-color: #F4F7F9;
+        background-color: #0A192F;
     }
     /* Sidebar Background */
     [data-testid="stSidebar"] {
-        background-color: #FFFFFF !important;
+        background-color: #172A45 !important;
     }
     /* Main text colors */
     h1, h2, h3, p, span, label {
-        color: #0A192F !important;
+        color: #F4F7F9 !important;
+    }
+    /* Text inside selection boxes and numericl inputs */
+    .stSelectbox div, .stNumberInput input, .stTextInput input {
+        color: #0A192F !important; /* Mantiene il testo dentro i widget leggibile su sfondo bianco */
     }
     /* Buttons colors */
     div.stButton > button {
