@@ -260,6 +260,10 @@ def standardize_data(df, scaler=None):
         if cols_to_scale:
             df_copy[cols_to_scale] = df_copy[cols_to_scale].astype(float)
             df_copy[cols_to_scale] = scaler.transform(df_copy[cols_to_scale])
+    
+    if 'postal_code' in df_copy.columns:
+        # Forza la colonna a diventare di tipo intero
+        df_copy['postal_code'] = df_copy['postal_code'].astype(int)
 
     return df_copy, scaler
 

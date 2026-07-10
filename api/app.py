@@ -98,7 +98,7 @@ def predict_property_price(sale_expectation: PropertyData):
     # obj of PropertyData class (with data from user) is now a Python dictionary
 
     pc = data.get("postal_code")
-    geo_data = GEO_MAPPING.get(str(pc)) or GEO_MAPPING.get(int(pc) if str(pc).isdigit() else None)
+    geo_data = GEO_MAPPING.get(int(pc) if str(pc).isdigit() else None)
 
     if geo_data and "latitude" in geo_data and "longitude" in geo_data:
         data["latitude"] = float(geo_data["latitude"])
