@@ -311,12 +311,6 @@ def render_investor_interface():
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-# --- Interface Routing Activation ---
-if "Buyer" in user:
-    render_buyer_interface()
-else:
-    render_investor_interface()
-
 # --- 3. MULTIPAGE CONFIGURATION (WEBSITE) ---
 
 # Declare logical pages pairing them with functions
