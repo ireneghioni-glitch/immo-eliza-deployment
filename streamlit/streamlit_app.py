@@ -101,6 +101,11 @@ def render_buyer_interface():
     # Button
     if st.button("Estimate the Price", use_container_width=True):
 
+        if has_garden:
+            v_total_area = living_area_m2 + garden_area_mq
+        else:
+            v_total_area = total_area_m2
+
         payload= {
             "property_type": property_type.capitalize(),
             "living_area_m2": living_area_m2,
@@ -113,13 +118,14 @@ def render_buyer_interface():
             "facades": 4 if property_type == "House" else facades,
             "bathrooms": bathrooms if bathrooms else (2 if property_type == "House" else 1),
             "garden_area_m2": garden_area_mq,
-            "furnished": False,
+            "furnished": furnished,
             "floor_number": floor_number if property_type == "Apartment" else 0,
-            "total_area_m2": total_area_m2 if total_area_m2 else living_area_m2 + garden_area_mq,
+            "floors_total": floors_total if floors_total != 0 else floor_number,
+            "total_area_m2": v_total_area,
             "kitchen_equipped": kitchen_equipped,
             "has_terrace": has_terrace,
+            "has_garden": has_garden,
             "building_year": building_year if building_year else 2000,
-            "furnished": furnished,
 
             # province and region
             "province": province,
