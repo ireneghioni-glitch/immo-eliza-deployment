@@ -53,7 +53,7 @@ print("✅ All artifacts are now ready in RAM.")
 
 # entrance schema
 class PropertyData(BaseModel):
-    living_area_m2: float
+    living_area_m2: int
     property_type: Union[Literal["House", "Apartment"], None] = None
     bedrooms: int
     postal_code: str
