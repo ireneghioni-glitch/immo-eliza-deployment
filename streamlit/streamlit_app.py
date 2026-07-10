@@ -38,7 +38,7 @@ PROVINCE_POSTAL_CODES = {
 
 # --- sidebar configuration ---
 
-img = Image.open("immoeliza_wordmark.png")
+img = Image.open(LOGO_PATH)
 
 st.sidebar.image(img, width=100)
 st.sidebar.title("🏠 ImmoEliza Hub")
