@@ -1,0 +1,12 @@
+[theme]
+# Color of mean backround
+backgroundColor = "#F4F7F9"
+
+# color of sidebar background
+secondaryBackgroundColor = "#FFFFFF"
+
+# color of main text
+textColor = "#0A192F"
+
+# Primary color (buttons, links and active widgets)
+primaryColor = "#FF2A7A"
