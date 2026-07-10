@@ -7,6 +7,38 @@ from pathlib import Path
 # --- Initial configuration ---
 st.set_page_config(page_title="immoEliza Properties Predictive Tool", layout="wide")
 
+# --- INTERFACE COLORS & APPEARENCE ---
+st.markdown(
+    """
+    <style>
+    /* Mean Background */
+    .stApp {
+        background-color: #F4F7F9;
+    }
+    /* Sidebar Background */
+    [data-testid="stSidebar"] {
+        background-color: #FFFFFF !important;
+    }
+    /* Main text colors */
+    h1, h2, h3, p, span, label {
+        color: #0A192F !important;
+    }
+    /* Buttons colors */
+    div.stButton > button {
+        background-color: #FF2A7A !important;
+        color: white !important;
+        border: none;
+    }
+    div.stButton > button:hover {
+        background-color: #E01561 !important; /* darker rose while pointing with mouse */
+        color: white !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 
 # --- Paths and Constants ---------------------------------
 
@@ -38,9 +70,7 @@ PROVINCE_POSTAL_CODES = {
 # --- sidebar configuration ---
 st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 st.sidebar.title("🏠 ImmoEliza Hub")
-st.sidebar.markdown("---")
 
-st.sidebar.markdown("---")
 
 # --- loading data ---
 @st.cache_data
