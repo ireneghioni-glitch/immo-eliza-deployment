@@ -1,0 +1,15 @@
+[theme]
+# Sfondo principale dell'applicazione (Mean Background)
+backgroundColor = "#0A192F"
+
+# Sfondo della Sidebar (Sidebar Background)
+secondaryBackgroundColor = "#172A45"
+
+# Colore dei testi principali (Main text colors)
+textColor = "#F4F7F9"
+
+# Colore del pulsante (lilla) e degli accenti attivi
+primaryColor = "#B9A6E8"
+
+# Font pulito di sistema
+font = "sans serif"
