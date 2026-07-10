@@ -239,9 +239,9 @@ def render_investor_interface():
                 "facades": 4 if proj_type == "House" else facades,
                 "bathrooms": 2 if proj_type == "House" else 1,
                 "garden_area_m2": garden_area_m2,
-                "living_area_m2": int(proj_area + garden_area_m2),
+                "total_area_m2": int(proj_area + garden_area_m2),
                 "furnished": False,
-                "floor_number": 1 if proj_type == "Apartment" else None,
+                "floor_number": int(floor_number if proj_type == "Apartment" else 0),
 
                 # region
                 "region": "Brussels Capital Region" if selected_province == "Brussels" else (
