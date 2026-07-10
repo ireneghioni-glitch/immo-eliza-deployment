@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import requests
 from pathlib import Path
-from PIL import Image
 
 
 # --- Initial configuration ---
@@ -37,9 +36,7 @@ PROVINCE_POSTAL_CODES = {
 
 
 # --- sidebar configuration ---
-st.logo(str(LOGO_PATH), icon_image=str(LOGO_PATH))
-
-st.sidebar.image(img, width=100)
+st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 st.sidebar.title("🏠 ImmoEliza Hub")
 st.sidebar.markdown("---")
 
