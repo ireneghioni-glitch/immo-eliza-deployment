@@ -258,7 +258,7 @@ def render_investor_interface():
                 "bedrooms": int(proj_type_rooms),
                 "living_area_m2": int(proj_area),
                 "total_area_m2": int(proj_area + garden_area_m2),
-                "province": api_province,,
+                "province": api_province,
                 "epc_score": final_epc_score,
 
                 # default values for API mandatory info
