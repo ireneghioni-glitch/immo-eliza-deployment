@@ -67,13 +67,14 @@ def render_buyer_interface():
             floors_total = st.number_input("Total Floors", "Insert total floors number of the building", min_value=1, max_value=50)
             if not floors_total:
                 floors_total = floor_number
-        living_area_m2 = st.number_input("Habitable floor area", min_value=1)
+        living_area_m2 = st.number_input("Habitable floor area (m²)", min_value=1)
         bedrooms = st.slider("Number of bedrooms", min_value=1, max_value=10, value=1)
         bathrooms = st.slider("Number of bathrooms", min_value=1, max_value=5, value=1)
         has_terrace = st.checkbox("Has terrace")
         has_garden = st.checkbox("Has garden")
         if has_garden:
-            garden_area_mq = st.number_input("Garden area", min_value=1)
+            garden_area_mq = st.number_input("Garden area (m²)", min_value=1)
+        total_area_m2 = st.number_input("Total area of property (m²)", min_value=living_area_m2)
         epc_score = st.selectbox("Select the EPC score", ['G', 'F', 'E-', 'E', 'E+', 'D-', 'D', 'D+', 'C-', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++'])
         state_of_the_building = st.selectbox("Select the state of the property", ['New', 'under construction', 'Fully renovated', 'Normal', 'To renovate', 'To restore', 'To demolish'])
         building_year = st.number_input("Insert year of construction", min_value=1000, max_value=2099)
@@ -108,12 +109,17 @@ def render_buyer_interface():
             "postal_code": postal_code,
 
             # optional
-            "state_of_the_building": "New",
+            "state_of_the_building": state_of_the_building,
             "facades": 4 if property_type == "House" else facades,
-            "bathrooms": 2 if property_type == "House" else 1,
+            "bathrooms": bathrooms if bathrooms else (2 if property_type == "House" else 1),
             "garden_area_m2": garden_area_mq,
             "furnished": False,
             "floor_number": floor_number if property_type == "Apartment" else 0,
+            "total_area_m2": total_area_m2 if total_area_m2 else living_area_m2,
+            "kitchen_equipped": kitchen_equipped,
+            "has_terrace": has_terrace,
+            "building_year": building_year if building_year else 2000,
+            "furnished": furnished,
 
             # province and region
             "province": province,
