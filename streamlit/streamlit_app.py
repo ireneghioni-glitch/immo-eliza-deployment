@@ -119,7 +119,7 @@ def render_buyer_interface():
         region = "Wallonia"
     
     # Button
-    if st.button("Estimate the Price"):
+    if st.button("Estimate the Price", use_container_width=True):
 
         payload= {
             "property_type": property_type.capitalize(),
@@ -257,7 +257,7 @@ def render_investor_interface():
         with c2:
             estimated_cost = st.number_input("Insert the estimated construction cost (€)", min_value=10000, value= 250000, step=5000)
 
-        if st.button("estimate the Financial Sustainability and ROI"):
+        if st.button("estimate the Financial Sustainability and ROI", use_container_width=True):
             payload = {
                 "property_type": proj_type.capitalize(),
                 "bedrooms": int(proj_type_rooms),
