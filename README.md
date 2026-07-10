@@ -23,13 +23,13 @@ A production-ready, interactive Streamlit intelligence portal powered by an ente
 * **The Problem:** Buying a home is one of the largest financial choices an individual makes. Buyers often struggle with information asymmetry, overpaying for properties, or failing to understand if a listed price reflects fair market value.
 * **Why this portal is compelling:** It democratizes data science. By providing an intuitive, streamlined form interface, non-technical buyers can input a few property traits and instantly get a data-backed market valuation. It gives regular consumers immediate leverage during price negotiations.
 
-![Buyer Interface](buyer_interface.jpeg)
+![Buyer Interface](streamlit/buyer_interface.jpeg)
 
 ### 2. The Professional Property Investor
 * **The Problem:** Investors need to run quick feasibility studies across multiple provinces, assess financial viability, estimate renovation costs, and calculate exact Return on Investment (ROI) without wading through messy spreadsheets.
 * **Why this portal is compelling:** It includes an advanced simulation engine. Beyond mere price prediction, it incorporates localized sub-market stats and geographical heatmaps. It automatically computes potential resale revenues, net profit margins, and ROI percentages, acting as an instantaneous automated financial analyst.
 
-![Investor Interface](investor_interface.jpeg)
+![Investor Interface](streamlit/investor_interface.jpeg)
 
 ---
 
