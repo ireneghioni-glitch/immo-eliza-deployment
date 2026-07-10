@@ -101,7 +101,7 @@ def render_buyer_interface():
     # Button
     if st.button("Estimate the Price", use_container_width=True):
 
-        if has_garden:
+        if has_garden and (total_area_m2 == living_area_m2):
             v_total_area = living_area_m2 + garden_area_mq
         else:
             v_total_area = total_area_m2
