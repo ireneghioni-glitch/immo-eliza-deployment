@@ -115,7 +115,7 @@ def render_buyer_interface():
             "garden_area_m2": garden_area_mq,
             "furnished": False,
             "floor_number": floor_number if property_type == "Apartment" else 0,
-            "total_area_m2": total_area_m2 if total_area_m2 else living_area_m2,
+            "total_area_m2": total_area_m2 if total_area_m2 else living_area_m2 + garden_area_mq,
             "kitchen_equipped": kitchen_equipped,
             "has_terrace": has_terrace,
             "building_year": building_year if building_year else 2000,
