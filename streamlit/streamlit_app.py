@@ -8,7 +8,7 @@ from pathlib import Path
 st.set_page_config(page_title="immoEliza Properties Predictive Tool", layout="wide")
 
 
-# --- Paths ------------------------------------------
+# --- Paths and Constants ---------------------------------
 
 # --- current dir ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -17,7 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent
 MAP = BASE_DIR / "map_for_inv_app.csv"
 PROV_STATS = BASE_DIR / "province_stats_for_inv_app.csv"
 
-# --- Constants ------------------------------------------
+LOGO_PATH = BASE_DIR / "immoeliza_wordmark.png"
+
 
 PROVINCE_POSTAL_CODES = {
         "Brussels": "1000",
@@ -35,6 +36,8 @@ PROVINCE_POSTAL_CODES = {
 
 
 # --- sidebar configuration ---
+
+st.logo(str(LOGO_PATH))
 # st.sidebar.imag("immoeliza_logo")
 st.sidebar.title("🏠 ImmoEliza Hub")
 st.sidebar.markdown("---")
@@ -151,7 +154,10 @@ def render_buyer_interface():
                 response = requests.post("https://immo-eliza-api-n2lj.onrender.com", json=payload)
                 if response.status_code == 200:
                     prediction = response.json().get("prediction", 0)
-                    st.success(f"Estimated Market price for this property is {prediction:,.2f} €")
+                    st.markdown("---")
+                    res_col1, res_col2 = st.columns(2)
+                    res_col1.metric("Estimated Market Price", f"{prediction:,.2f} €")
+                    st.success("The price estimation has been generated successfully based on local market parameters.")
                 else:
                     st.error(f"API error ({response.status_code}): {response.text}")
             except Exception as e:
@@ -310,3 +316,15 @@ if "Buyer" in user:
     render_buyer_interface()
 else:
     render_investor_interface()
+
+# --- 3. MULTIPAGE CONFIGURATION (WEBSITE) ---
+
+# Declare logical pages pairing them with functions
+buyer_page = st.Page(render_buyer_interface, title="Buyer Analytics", icon="🛒")
+investor_page = st.Page(render_investor_interface, title="Investor Simulator", icon="📈")
+
+# activating native navigation
+pg = st.navigation([buyer_page, investor_page])
+
+# executing selected page
+pg.run()
