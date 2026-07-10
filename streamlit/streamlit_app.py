@@ -299,7 +299,8 @@ def render_investor_interface():
                         else:
                             st.error(f"Financial Loss Risk: {net_profit:,.2f} € (ROI: {roi:.1f}%)")
                     else:
-                        st.error("Unable to generate an estimate for this combination.")
+                        st.error(f"API error ({response.status_code}): {response.text}")
+                        # st.error("Unable to generate an estimate for this combination.")
                 except Exception as e:
                     st.error(f"Error: {e}")
 
