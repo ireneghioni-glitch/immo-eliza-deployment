@@ -164,7 +164,10 @@ def render_investor_interface():
         # extracting data
         prov_data = df_stats[df_stats['province'] == selected_province]
 
-        # Scalar Aggregation: calculate data before passing them to UI
+        # dynamic Belgium map: filtering of df_map
+        filtered_map = df_map[df_map['province'] == selected_province]
+
+        # dynamic statistics per province: calculate data before passing them to UI
         avg_price = float(prov_data['mean_price_mq'].mean())
         avg_density = float(prov_data['mean_urban_density'].mean())
         total_properties = int(prov_data['properties_total'].sum())
@@ -193,9 +196,9 @@ def render_investor_interface():
     
         st.markdown("---")
 
-        # MAP
+        # DYNAMIC BELGIUM MAP
         st.subheader(f"Real estate density map in {selected_province}")
-        st.map(df_map)
+        st.map(filtered_map)
 
         st.markdown("---")
 
@@ -209,7 +212,7 @@ def render_investor_interface():
             if proj_type == "Apartment":
                 facades = st.slider("Insert number of facades", min_value=1, max_value=4, help="A default value will be used if no value is given")
                 floor_number = st.number_input("Insert number of floor", min_value=0, max_value=50, help="A default value will be used if no value is given")
-                floors_total = st.number_input("Insert number of floor", min_value=0, max_value=50, help="A default value will be used if no value is given")
+                floors_total = st.number_input("Insert total floors of the building", min_value=0, max_value=50, help="A default value will be used if no value is given")
                 if not floors_total:
                     floors_total = floor_number
             else:
