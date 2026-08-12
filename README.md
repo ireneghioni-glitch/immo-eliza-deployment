@@ -1,65 +1,71 @@
-# 🏡 Immo-Eliza Predictive Tool & Market Analytics Hub Deployment 🚀
+# ImmoEliza Analytics: Real Estate Valuation & Investment Portal
 
-![Python](https://img.shields.io/badge/Python-3.14.5-blue)
-![Sprint](https://img.shields.io/badge/Sprint-4%20🏁-brightgreen)
-![Status](https://img.shields.io/badge/Status-ongoing-brightgreen)
-[![BeCode](https://img.shields.io/badge/Training-BeCode-brilliantgreen?logo=becode&logoColor=white)](https://becode.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.36%2B-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.0.3-EB5424?style=flat&logo=xgboost&logoColor=white)](https://xgboost.readthedocs.io/)
+[![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat)]()
+[![BeCode](https://img.shields.io/badge/Training-BeCode-brilliantgreen?style=flat&logo=becode&logoColor=white)](https://becode.org/)
 
-- Repository: `immo-eliza-deployment`
-- Type: `Learning`
-- Duration: `5 days`
-- Deadline: `10/07/2024 at 4:00 PM`
-- Team: Solo
+**Check the app here:** [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://immoeliza-prediction-app.streamlit.app/)
 
-![Logo ImmoEliza](streamlit/immoeliza_logo.png)
+ImmoEliza Analytics is an interactive web portal designed to deliver automated property market valuations and investment metrics across Belgium. The application couples a Streamlit visualization layer with a hosted FastAPI backend powered by an XGBoost machine learning model.
 
-A production-ready, interactive Streamlit intelligence portal powered by an enterprise-grade Machine Learning backend. This application translates complex real estate data pipeline models into actionable insights, tailored for two distinct market players: **Home Buyers** and **Property Investors**.
-
----
-
-## 🎯 Target Audience & Value Proposition
-
-### 1. The Regular Home Buyer
-* **The Problem:** Buying a home is one of the largest financial choices an individual makes. Buyers often struggle with information asymmetry, overpaying for properties, or failing to understand if a listed price reflects fair market value.
-* **Why this portal is compelling:** It democratizes data science. By providing an intuitive, streamlined form interface, non-technical buyers can input a few property traits and instantly get a data-backed market valuation. It gives regular consumers immediate leverage during price negotiations.
-
-![Buyer Interface](streamlit/buyer_interface.jpeg)
-
-### 2. The Professional Property Investor
-* **The Problem:** Investors need to run quick feasibility studies across multiple provinces, assess financial viability, estimate renovation costs, and calculate exact Return on Investment (ROI) without wading through messy spreadsheets.
-* **Why this portal is compelling:** It includes an advanced simulation engine. Beyond mere price prediction, it incorporates localized sub-market stats and geographical heatmaps. It automatically computes potential resale revenues, net profit margins, and ROI percentages, acting as an instantaneous automated financial analyst.
-
-![Investor Interface](streamlit/investor_interface.jpeg)
+* **Domain:** Real Estate Market Intelligence & Predictive Analytics
+* **Execution Timeframe:** 5-Day Sprint (Learning Challenge)
+* **Development Type:** Solo Project (BeCode AI & Data Science Bootcamp)
 
 ---
 
-## ⭐ Case Study: Project Development
+## Architecture & Data Flow
 
-### Situation
-The Belgian real estate market features highly fragmented data across different provinces and regions, making accurate property valuation and investment benchmarking difficult for individuals and professionals alike. The goal was to deploy a live, user-facing intelligence application that could interface with a remote machine learning model to bridge this gap.
-
-### Task
-My task was to engineer a robust, fast-loading frontend architecture using Streamlit. The application needed to support dual-mode analytics workflows (Buyer vs. Investor), dynamically render geospatial map data, handle API state management (including cold starts on deployment servers like Render), and reflect a clean, unified brand identity matching the corporate logo assets.
-
-### Action
-1.  **Engineered Dual Interfaces:** Built dedicated UI routing branches (`render_buyer_interface` and `render_investor_interface`) to separate the consumer-facing valuation form from the heavy analytical investor dashboard.
-2.  **Optimized Performance & State:** Implemented Streamlit caching routines (`@st.cache_data`) to parse and load regional statistics (`province_stats_for_inv_app.csv`) and geographical coordinates (`map_for_inv_app.csv`) efficiently, cutting intra-app latency down to zero.
-3.  **Custom Brand Integration:** Injected targeted CSS styling to align the application’s design system directly with the corporate brand guidelines—applying a high-contrast dark theme, custom lilla button components (`#B9A6E8`), and layout-optimized asset rendering (`use_container_width=True` for wordmarks).
-4.  **Resilience Engineering:** Integrated error handles and informational logs to guide users gracefully during API cold starts (Render's 15-minute container spin-downs).
-
-### Result
-* Successfully delivered a multi-tiered, responsive data product that generates accurate market valuations in real-time.
-* Achieved instantaneous sub-second prediction rendering for active server sessions.
-* Maintained 100% decoupling between the visualization layer, the local geographical datasets, and the hosted predictive machine learning backend.
+```text
++-----------------------------------+       HTTP POST       +-----------------------------------+
+|         Streamlit Frontend        | --------------------> |          FastAPI Backend          |
+|  - UI Routing (Buyer / Investor)  |                       |  - Pydantic Request Validation    |
+|  - Cached Spatial Data (CSV)      | <-------------------- |  - Preprocessing & Scalers        |
+|  - Custom CSS & Plotting Engine   |     JSON Valuation    |  - XGBoost Inference Pipeline     |
++-----------------------------------+                       +-----------------------------------+
+```
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Ingestion & System Workflow
 
-* **Frontend Framework:** Streamlit (Python-native web execution)
-* **Data Processing:** Pandas, Pathlib
-* **Asset Management:** Pillow (PIL)
-* **API Interfacing:** Requests (Communicating with a remote FastAPI/XGBoost backend)
+1. **User Request**: The user enters property parameters via the Streamlit frontend UI.
+2. **Data Validation**: Inputs are bundled into a JSON payload and sent via HTTP POST to the `/predict` API endpoint, validated by Pydantic schemas.
+3. **Pipeline Transformation**: The backend applies serialized encoders (One-Hot, Ordinal), scaling arrays, and median fallbacks to prepare the vector.
+4. **Model Inference**: The transformed feature vector is scored by an XGBoost regression model to compute predicted property valuation.
+5. **UI Rendering**: The response is processed by Streamlit to render real-time valuation metrics, ROI projections, or regional market heatmaps.
+
+---
+
+## Core Features & Interfaces
+
+The application isolates functional workflows based on user needs:
+
+### 1. Home Buyer Valuation Module
+* **Automated Price Estimation**: Accepts key structural inputs (living area, room count, building condition, location) to output a fair market baseline valuation.
+* **Negotiation Context**: Reduces pricing asymmetry for buyers through data-backed property benchmarks.
+
+### 2. Investor Analytics Engine
+* **Financial Feasibility**: Computes projected resale revenues, net profit margins, and ROI percentages based on user-defined acquisition and renovation estimates.
+* **Geospatial Insights**: Uses localized province statistics and coordinate datasets to render geographical heatmaps and regional price distributions.
+
+---
+
+## Data Pipeline & Backend Architecture
+
+The backend implementation relies on modularized feature transformations prior to scoring:
+
+```text
+Input Features ---> Validation ---> Categorical Encoding ---> Numerical Scaling ---> Model Scoring ---> Output JSON
+                    (Pydantic)      (OHE & Ordinal)           (Scaler)               (XGBoost)
+```
+
+* **Categorical Handling**: Uses `ohe.joblib` and `ordinal.joblib` to process structural states and categorical variables.
+* **Geographic Feature Engineering**: Maps postal codes to spatial density metrics (`density_mapping.joblib`, `geo_mapping.joblib`).
+* **Performance Optimization**: Implements Streamlit data caching (`@st.cache_data`) for static CSV loading (`province_stats_for_inv_app.csv`, `map_for_inv_app.csv`) to minimize interface latency.
 
 ---
 
@@ -67,35 +73,75 @@ My task was to engineer a robust, fast-loading frontend architecture using Strea
 
 ```text
 immo-eliza-deployment/
-│
-├── api/                                 # Backend Production API (FastAPI application)
-│   ├── utils/                           # Data pipelines, validation, and transformations
-│   │   ├── __init__.py
-│   │   ├── preprocessing.py             # Feature cleaning and handling of missing inputs
-│   │   ├── split_data.py                # Train/test split utility functions
-│   │   └── validation.py                # Pydantic payloads type check controls
-│   ├── __init__.py
-│   ├── app.py                           # Core API server entrypoint orchestration
-│   ├── bins_density.joblib              # Quantile threshold mappings for urban index
-│   ├── density_mapping.joblib
-│   ├── geo_mapping.joblib               # Geographic spatial lookup serialization
-│   ├── global_medians.joblib            # Fallback values for incomplete property inputs
-│   ├── ohe.joblib                       # One-Hot Encoder weights for categorical data
-│   ├── ordinal.joblib                   # Ordinal encoding scales for structural states
-│   ├── predict.py                       # Extracted ML scoring logic routing functions
-│   ├── scaler.joblib                    # Normalization scalar arrays for numerical inputs
-│   └── xgboost_model.joblib             # Core trained XGBoost regression model object
-│
-├── streamlit/                           # Frontend UI Application Layer
-│   ├── .streamlit/                      # Native framework configuration hub
-│   │   └── config.toml                  # Application theme specs (Light/Dark mode)
-│   ├── immoeliza_logo.png               # High-resolution brand logo asset
-│   ├── map_for_inv_app.csv              # Coordinate data for investor heatmaps
+├── api/                                 # FastAPI Backend Service
+│   ├── utils/                           # Data pipeline & transformation utilities
+│   │   ├── preprocessing.py             # Feature cleaning & encoding pipelines
+│   │   ├── split_data.py               # Data partitioning utilities
+│   │   └── validation.py                # Pydantic data contract schemas
+│   ├── app.py                           # Core API server entrypoint
+│   ├── predict.py                       # ML model execution routing
+│   ├── Dockerfile                       # Container definition for API deployment
+│   └── *.joblib                         # Serialized pipeline encoders, scalers & model
+├── streamlit/                           # Streamlit Frontend Application
+│   ├── .streamlit/
+│   │   └── config.toml                  # UI theme parameters
+│   ├── map_for_inv_app.csv              # Coordinate data for geospatial visualization
 │   ├── province_stats_for_inv_app.csv   # Aggregated regional baseline statistics
-│   └── streamlit_app.py                 # Main portal execution engine & UI layout
-│
-├── .gitignore                           # Excluded files tracking patterns list
-├── Dockerfile                           # Container building assembly instructions script
-├── main.py                              # Master structural framework pipeline root hook
-├── README.md                            # Comprehensive project overview documentation
-└── requirements.txt                     # Explicit platform-wide Python dependencies list
+│   └── streamlit_app.py                 # Application layout & UI engine
+├── README.md                            # Project documentation
+└── requirements.txt                     # Explicit Python dependencies list
+```
+
+---
+
+## Local Setup & Deployment
+
+### 1. Clone Repository
+
+```bash
+git clone [https://github.com/ireneghioni-glitch/immo-eliza-deployment.git](https://github.com/ireneghioni-glitch/immo-eliza-deployment.git)
+cd immo-eliza-deployment
+```
+
+### 2. Launch FastAPI Backend
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the API server
+uvicorn api.app:app --reload --port 8000
+```
+
+### 3. Launch Streamlit Frontend
+
+In a separate terminal window:
+
+```bash
+streamlit run streamlit/streamlit_app.py
+```
+
+---
+
+## Application Previews
+
+### Buyer Interface
+
+![Buyer Interface](streamlit/buyer_interface.jpeg)
+
+### Investor Interface
+
+![Investor Interface](streamlit/investor_interface.jpeg)
+
+<br>
+
+---
+
+<br>
+
+### Author
+
+**Irene Ghioni**  
+[AI & Data Science](https://becode.org/en/job-seekers/trainings/ai-data-science) Trainee at [BeCode Belgium](https://becode.org/) *(Specializing in Data Science)*  
+
+[![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ireneghioni/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/ireneghioni-glitch)
